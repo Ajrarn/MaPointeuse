@@ -17,7 +17,7 @@ const winURL = process.env.NODE_ENV === 'development'
   : `file://${__dirname}/index.html`
 
 function createWindow () {
-  Settings.get('name', {
+  Settings.set('name', {
     first: 'Cosmo',
     last: 'Kramer'
   })
@@ -49,8 +49,6 @@ app.on('activate', () => {
   if (mainWindow === null) {
     createWindow()
   }
-
-
 })
 
 ipcMain.on('setName', (event, arg) => {
@@ -62,10 +60,8 @@ ipcMain.on('setName', (event, arg) => {
 })
 
 ipcMain.on('getName', (event, arg) => {
-    // Print 1
-    console.log(arg)
-    // Reply on async message from renderer proces
-    event.sender.send('getName-reply', Settings.get('name'))
+  // Reply on async message from renderer proces
+  event.sender.send('getName-reply', Settings.get('name'))
 })
 
 /**
