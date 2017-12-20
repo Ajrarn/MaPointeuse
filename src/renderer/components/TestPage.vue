@@ -29,7 +29,17 @@
         increnentCounter () {
           this.$store.commit('INCREMENT_MAIN_COUNTER')
         }
-      }
+      },
+      mounted () {
+        setInterval(() => {
+          this.$electron.ipcRenderer.send('ping')
+        }, 1000)
+
+         this.$electron.ipcRenderer.on('pong', (event, data) => {
+            this.myDataVar = data
+             console.log(data)
+          })
+        }
     }
 </script>
 
