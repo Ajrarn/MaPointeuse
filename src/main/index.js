@@ -1,6 +1,12 @@
 'use strict'
 
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
+import Settings from 'electron-settings'
+
+const defaultSetting = {
+  first: 'Cosmo',
+  last: 'Kramer'
+}
 
 /**
  * Set `__static` path to static files in production
@@ -44,6 +50,20 @@ app.on('activate', () => {
   if (mainWindow === null) {
     createWindow()
   }
+})
+
+ipcMain.on('setSetting', (event, arg) => {
+  // Print 1
+  console.log('setSetting', arg)
+  Settings.set('name', arg)
+  // Reply on async message from renderer process
+  event.sender.send('setSetting-reply')
+})
+
+ipcMain.on('getSetting', (event) => {
+  console.log('getSetting')
+  // Reply on async message from renderer proces
+  event.sender.send('getSetting-reply', Settings.get('name', defaultSetting))
 })
 
 /**
