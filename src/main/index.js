@@ -3,6 +3,11 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import Settings from 'electron-settings'
 
+const defaultSetting = {
+  first: 'Cosmo',
+  last: 'Kramer'
+}
+
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -17,10 +22,6 @@ const winURL = process.env.NODE_ENV === 'development'
   : `file://${__dirname}/index.html`
 
 function createWindow () {
-  Settings.set('name', {
-    first: 'Cosmo',
-    last: 'Kramer'
-  })
   /**
    * Initial window options
    */
@@ -51,17 +52,18 @@ app.on('activate', () => {
   }
 })
 
-ipcMain.on('setName', (event, arg) => {
+ipcMain.on('setSetting', (event, arg) => {
   // Print 1
-  console.log(arg)
+  console.log('setSetting', arg)
   Settings.set('name', arg)
   // Reply on async message from renderer process
-  event.sender.send('setName-reply')
+  event.sender.send('setSetting-reply')
 })
 
-ipcMain.on('getName', (event, arg) => {
+ipcMain.on('getSetting', (event) => {
+  console.log('getSetting')
   // Reply on async message from renderer proces
-  event.sender.send('getName-reply', Settings.get('name'))
+  event.sender.send('getSetting-reply', Settings.get('name', defaultSetting))
 })
 
 /**

@@ -14,11 +14,19 @@ const mutations = {
 }
 
 const actions = {
-  getName ({ commit }) {
+  getSetting ({ commit }) {
     if (ipcRenderer) {
-      ipcRenderer.send('getName')
-      ipcRenderer.once('getName-reply', (event, data) => {
+      ipcRenderer.send('getSetting')
+      ipcRenderer.once('getSetting-reply', (event, data) => {
         commit('GET_NAME_RECEIVED', data)
+      })
+    }
+  },
+  setSetting ({ commit }, payload) {
+    if (ipcRenderer) {
+      ipcRenderer.send('setSetting', payload)
+      ipcRenderer.once('setSetting-reply', () => {
+        commit('GET_NAME_RECEIVED', payload)
       })
     }
   }
