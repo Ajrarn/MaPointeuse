@@ -16,6 +16,21 @@ export default new Router({
       component: require('@/components/TestPage').default
     },
     {
+      path: '/principale',
+      name: 'page-principale',
+      component: require('@/components/PagePrincipale').default,
+      children: [
+        {
+          path: 'preferences',
+          component: require('@/components/PagePrincipaleComponents/PagePreferences').default
+        },
+        {
+          path: '',
+          component: require('@/components/PagePrincipaleComponents/PagePointage').default
+        }
+      ]
+    },
+    {
       path: '*',
       redirect: '/'
     }
