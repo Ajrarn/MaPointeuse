@@ -8,8 +8,8 @@ const state = {
 }
 
 const mutations = {
-  GET_NAME_RECEIVED (state, payload) {
-    state.name = payload
+  UPDATE_SETTINGS (state, payload) {
+    state = payload
   }
 }
 
@@ -18,7 +18,7 @@ const actions = {
     if (ipcRenderer) {
       ipcRenderer.send('getSetting')
       ipcRenderer.once('getSetting-reply', (event, data) => {
-        commit('GET_NAME_RECEIVED', data)
+        commit('UPDATE_SETTINGS', data)
       })
     }
   },
@@ -26,7 +26,7 @@ const actions = {
     if (ipcRenderer) {
       ipcRenderer.send('setSetting', payload)
       ipcRenderer.once('setSetting-reply', () => {
-        commit('GET_NAME_RECEIVED', payload)
+        commit('UPDATE_SETTINGS', payload)
       })
     }
   }

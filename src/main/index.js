@@ -54,16 +54,14 @@ app.on('activate', () => {
 
 ipcMain.on('setSetting', (event, arg) => {
   // Print 1
-  console.log('setSetting', arg)
-  Settings.set('name', arg)
+  Settings.set('settings', arg)
   // Reply on async message from renderer process
   event.sender.send('setSetting-reply')
 })
 
 ipcMain.on('getSetting', (event) => {
-  console.log('getSetting')
   // Reply on async message from renderer proces
-  event.sender.send('getSetting-reply', Settings.get('name', defaultSetting))
+  event.sender.send('getSetting-reply', Settings.get('settings', defaultSetting))
 })
 
 /**
