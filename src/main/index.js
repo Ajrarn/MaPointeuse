@@ -4,8 +4,17 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import Settings from 'electron-settings'
 
 const defaultSetting = {
-  first: 'Cosmo',
-  last: 'Kramer'
+  utilisateur: {
+    prenom: 'Christophe',
+    nom: 'Dos Santos'
+  },
+  pointage: {
+    maxMatin: 0,
+    minApresMidi: 0,
+    bonusDebut: 0,
+    bonusFin: 0,
+    minPauseMediane: 0
+  }
 }
 
 /**

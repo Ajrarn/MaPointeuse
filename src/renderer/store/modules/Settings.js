@@ -1,15 +1,25 @@
 import { ipcRenderer } from 'electron'
 
 const state = {
-  name: {
-    first: '',
-    last: ''
+  settings: {
+    utilisateur: {
+      prenom: '',
+      nom: ''
+    },
+    pointage: {
+      maxMatin: 0,
+      minApresMidi: 0,
+      bonusDebut: 0,
+      bonusFin: 0,
+      minPauseMediane: 0
+    }
   }
 }
 
 const mutations = {
   UPDATE_SETTINGS (state, payload) {
-    state = payload
+    // Object.assign(state, payload)
+    state.settings = payload
   }
 }
 
