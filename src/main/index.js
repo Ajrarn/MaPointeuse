@@ -9,11 +9,11 @@ const defaultSetting = {
     nom: 'Dos Santos'
   },
   pointage: {
-    maxMatin: 0,
-    minApresMidi: 0,
-    bonusDebut: 0,
-    bonusFin: 0,
-    minPauseMediane: 0
+    maxMatin: '',
+    minApresMidi: '',
+    bonusDebut: '',
+    bonusFin: '',
+    minPauseMediane: ''
   }
 }
 
@@ -31,13 +31,14 @@ const winURL = process.env.NODE_ENV === 'development'
   : `file://${__dirname}/index.html`
 
 function createWindow () {
+  // Settings.set('settings', defaultSetting)
   /**
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    height: 563,
+    height: 800,
     useContentSize: true,
-    width: 1000
+    width: 1280
   })
 
   mainWindow.loadURL(winURL)

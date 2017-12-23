@@ -18,7 +18,6 @@ const state = {
 
 const mutations = {
   UPDATE_SETTINGS (state, payload) {
-    // Object.assign(state, payload)
     state.settings = payload
   }
 }
