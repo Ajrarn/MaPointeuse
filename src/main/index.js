@@ -9,11 +9,11 @@ const defaultSetting = {
     nom: 'Dos Santos'
   },
   pointage: {
-    maxMatin: '',
-    minApresMidi: '',
-    bonusDebut: '',
-    bonusFin: '',
-    minPauseMediane: ''
+    maxMatin: null,
+    minApresMidi: null,
+    bonusDebut: null,
+    bonusFin: null,
+    minPauseMediane: null
   }
 }
 
