@@ -7,11 +7,6 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'landing-page',
-      component: require('@/components/LandingPage').default
-    },
-    {
-      path: '/principale',
       name: 'page-principale',
       component: require('@/components/PagePrincipale').default,
       children: [
@@ -20,14 +15,14 @@ export default new Router({
           component: require('@/components/PagePrincipaleComponents/PagePreferences').default
         },
         {
-          path: '',
+          path: 'pointage',
           component: require('@/components/PagePrincipaleComponents/PagePointage').default
         }
       ]
     },
     {
       path: '*',
-      redirect: '/'
+      redirect: '/pointage'
     }
   ]
 })

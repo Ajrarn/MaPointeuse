@@ -13,7 +13,7 @@
         <span slot="title">Pointage</span>
       </el-menu-item>
       <el-menu-item index="3"
-                    v-on:click="goTo('/principale/preferences')">
+                    v-on:click="goTo('/preferences')">
         <i class="el-icon-setting"></i>
         <span slot="title">Préférences</span>
       </el-menu-item>
