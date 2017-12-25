@@ -3,6 +3,8 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import Settings from 'electron-settings'
 
+import Datastore from 'nedb'
+
 const defaultSetting = {
   utilisateur: {
     prenom: 'Christophe',
@@ -14,7 +16,8 @@ const defaultSetting = {
     bonusDebut: null,
     bonusFin: null,
     minPauseMediane: null
-  }
+  },
+  dbFile: ''
 }
 
 /**
@@ -26,12 +29,20 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 let mainWindow
+let db
+let settings
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
 
 function createWindow () {
   // Settings.set('settings', defaultSetting)
+  settings = Settings.get('settings', defaultSetting)
+
+  if (settings.dbFile && settings.dbFile.length > 0) {
+    db = new Datastore({filename: settings.dbFile, autoload: true})
+  }
+
   /**
    * Initial window options
    */
@@ -67,11 +78,44 @@ ipcMain.on('setSetting', (event, arg) => {
   Settings.set('settings', arg)
   // Reply on async message from renderer process
   event.sender.send('setSetting-reply')
+
+  // load database if necessary
+  if (arg.dbFile && arg.dbFile.length > 0) {
+    db = new Datastore({filename: arg.dbFile, autoload: true})
+  }
 })
 
 ipcMain.on('getSetting', (event) => {
   // Reply on async message from renderer proces
   event.sender.send('getSetting-reply', Settings.get('settings', defaultSetting))
+})
+
+ipcMain.on('getDocument', (event, arg) => {
+  if (db) {
+    db.find({mois: arg}, (err, docs) => {
+      if (!err) {
+        event.sender.send('getDocument-reply', docs)
+      } else {
+        event.sender.send('getDocument-error', err)
+      }
+    })
+  } else {
+    event.sender.send('getDocument-error', 'pas de base de donnée')
+  }
+})
+
+ipcMain.on('saveDocument', (event, arg) => {
+  if (db) {
+    db.update({mois: arg.mois}, arg, {upsert: true}, (err, numAffected) => {
+      if (!err) {
+        event.sender.send('saveDocument-reply', numAffected)
+      } else {
+        event.sender.send('saveDocument-error', err)
+      }
+    })
+  } else {
+    event.sender.send('getDocument-error', 'pas de base de donnée')
+  }
 })
 
 /**

@@ -69,17 +69,22 @@
                   placeholder="Choisissez une durée">
           </el-time-picker>
         </el-form-item>
+        <el-form-item label="Fichier contenant les données de pointage">
+            <el-input v-model="formSettings.dbFile" placeholder="Cliquez à droite pour choisir">
+              <el-button slot="append" icon="el-icon-search" @click="selectFile"></el-button>
+            </el-input>
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">Sauvegarder</el-button>
           <el-button>Annuler</el-button>
         </el-form-item>
-        <el-input-number
       </el-form>
     </el-main>
   </el-container>
 </template>
 
 <script>
+  import { remote } from 'electron'
   export default {
     name: 'page-preferences',
     data () {
@@ -95,7 +100,8 @@
             bonusDebut: 0,
             bonusFin: 0,
             minPauseMediane: 0
-          }
+          },
+          dbFile: ''
         }
       }
     },
@@ -117,9 +123,9 @@
             bonusDebut: this.convertSecondesEnMMss(newSetting.pointage.bonusDebut),
             bonusFin: this.convertSecondesEnMMss(newSetting.pointage.bonusFin),
             minPauseMediane: this.convertSecondesEnHHmm(newSetting.pointage.minPauseMediane)
-          }
+          },
+          dbFile: newSetting.dbFile
         }
-        console.log('formSettings', this.formSettings)
       }
     },
     methods: {
@@ -135,7 +141,8 @@
             bonusDebut: this.convertMMssEnsecondes(this.formSettings.pointage.bonusDebut),
             bonusFin: this.convertMMssEnsecondes(this.formSettings.pointage.bonusFin),
             minPauseMediane: this.convertHHmmEnsecondes(this.formSettings.pointage.minPauseMediane)
-          }
+          },
+          dbFile: this.formSettings.dbFile
         }
         this.$store.dispatch('setSetting', formToDispatch)
       },
@@ -183,6 +190,12 @@
         } else {
           return 0
         }
+      },
+      selectFile () {
+        let that = this
+        remote.dialog.showSaveDialog((fileName) => {
+          that.formSettings.dbFile = fileName
+        })
       }
     },
     mounted () {
