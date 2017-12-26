@@ -107,15 +107,15 @@ ipcMain.on('getDocument', (event, arg) => {
 ipcMain.on('saveDocument', (event, arg) => {
   if (db) {
     db.update({mois: arg.mois}, arg, {upsert: true}, (err, numAffected) => {
-      if (!err) {
-        event.sender.send('saveDocument-reply', numAffected)
-      } else {
-        event.sender.send('saveDocument-error', err)
-      }
+      event.sender.send('saveDocument-reply',{numAffected, err})
     })
   } else {
-    event.sender.send('getDocument-error', 'pas de base de donnée')
+    event.sender.send('saveDocument-reply', {null, 'pas de base de donnée'})
   }
+})
+
+ipcMain.on('getReady', (event) => {
+  event.sender.send('getReady-reply', db !== null && db!== undefined)
 })
 
 /**
