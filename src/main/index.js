@@ -90,32 +90,31 @@ ipcMain.on('getSetting', (event) => {
   event.sender.send('getSetting-reply', Settings.get('settings', defaultSetting))
 })
 
-ipcMain.on('getDocument', (event, arg) => {
+ipcMain.on('getFeuillePointage', (event, arg) => {
   if (db) {
-    db.find({mois: arg}, (err, docs) => {
-      if (!err) {
-        event.sender.send('getDocument-reply', docs)
-      } else {
-        event.sender.send('getDocument-error', err)
-      }
+    db.find({jour: arg.jour}, (err, docs) => {
+      console.log('docs', docs)
+      let doc = docs.length > 0 ? docs[0] : null
+      console.log('doc', doc)
+      event.sender.send('getFeuillePointage-reply', {erreur: err, document: doc})
     })
   } else {
-    event.sender.send('getDocument-error', 'pas de base de donnée')
+    event.sender.send('getFeuillePointage-reply', {erreur: 'pas de base de donnée', document: null})
   }
 })
 
-ipcMain.on('saveDocument', (event, arg) => {
+ipcMain.on('saveFeuillePointage', (event, arg) => {
   if (db) {
-    db.update({mois: arg.mois}, arg, {upsert: true}, (err, numAffected) => {
-      event.sender.send('saveDocument-reply',{numAffected, err})
+    db.update({jour: arg.jour}, arg, {upsert: true}, (err, numAffected) => {
+      event.sender.send('saveFeuillePointage-reply', {numeroAffecte: numAffected, erreur: err})
     })
   } else {
-    event.sender.send('saveDocument-reply', {null, 'pas de base de donnée'})
+    event.sender.send('saveFeuillePointage-reply', {numeroAffecte: null, erreur: 'pas de base de donnée'})
   }
 })
 
 ipcMain.on('getReady', (event) => {
-  event.sender.send('getReady-reply', db !== null && db!== undefined)
+  event.sender.send('getReady-reply', db !== null && db !== undefined)
 })
 
 /**

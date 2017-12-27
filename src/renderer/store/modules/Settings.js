@@ -7,10 +7,8 @@ const state = {
       nom: ''
     },
     pointage: {
-      maxMatin: 0,
-      minApresMidi: 0,
-      bonusDebut: 0,
-      bonusFin: 0,
+      bonusEntrant: 0,
+      bonusSortant: 0,
       minPauseMediane: 0
     }
   }

@@ -16,9 +16,9 @@
         </el-form-item>
         <el-row :gutter="20">
           <el-col :span="11">
-            <el-form-item  label="Bonus Premier pointage">
+            <el-form-item  label="Bonus pointage entrant">
               <el-time-picker
-                      v-model="formSettings.pointage.bonusDebut"
+                      v-model="formSettings.pointage.bonusEntrant"
                       :format="'mm:ss'"
                       :valueFormat="'mm:ss'"
                       placeholder="Choisissez une durée">
@@ -26,36 +26,12 @@
             </el-form-item>
           </el-col>
           <el-col :span="11">
-            <el-form-item  label="Bonus Dernier pointage">
+            <el-form-item  label="Bonus pointage sortant">
               <el-time-picker
-                      v-model="formSettings.pointage.bonusFin"
+                      v-model="formSettings.pointage.bonusSortant"
                       :format="'mm:ss'"
                       :valueFormat="'mm:ss'"
                       placeholder="Choisissez une durée">
-              </el-time-picker>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="11">
-            <el-form-item  label="Pointage Maximum du matin">
-              <el-time-picker
-                      v-model="formSettings.pointage.maxMatin"
-                      :picker-options="{selectableRange: '06:30:00 - 20:00:00'}"
-                      :format="'HH:mm'"
-                      :valueFormat="'HH:mm'"
-                      placeholder="Choisissez un horaire">
-              </el-time-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="11">
-            <el-form-item  label="Pointage minimum de l'après-midi">
-              <el-time-picker
-                v-model="formSettings.pointage.minApresMidi"
-                :picker-options="{selectableRange: '06:30:00 - 20:00:00'}"
-                :format="'HH:mm'"
-                :valueFormat="'HH:mm'"
-                placeholder="Choisissez un horaire">
               </el-time-picker>
             </el-form-item>
           </el-col>
@@ -85,6 +61,8 @@
 
 <script>
   import { remote } from 'electron'
+  import { convertSecondesEnMMss, convertSecondesEnHHmm, convertHHmmEnsecondes, convertMMssEnsecondes } from '../../util/convert-time'
+
   export default {
     name: 'page-preferences',
     data () {
@@ -95,11 +73,8 @@
             nom: ''
           },
           pointage: {
-            maxMatin: 0,
-            minApresMidi: 0,
-            bonusDebut: 0,
-            bonusFin: 0,
-            minPauseMediane: 0
+            bonusEntrant: 0,
+            bonusSortant: 0
           },
           dbFile: ''
         }
@@ -118,11 +93,9 @@
             nom: newSetting.utilisateur.nom
           },
           pointage: {
-            maxMatin: this.convertSecondesEnHHmm(newSetting.pointage.maxMatin),
-            minApresMidi: this.convertSecondesEnHHmm(newSetting.pointage.minApresMidi),
-            bonusDebut: this.convertSecondesEnMMss(newSetting.pointage.bonusDebut),
-            bonusFin: this.convertSecondesEnMMss(newSetting.pointage.bonusFin),
-            minPauseMediane: this.convertSecondesEnHHmm(newSetting.pointage.minPauseMediane)
+            bonusEntrant: convertSecondesEnMMss(newSetting.pointage.bonusEntrant),
+            bonusSortant: convertSecondesEnMMss(newSetting.pointage.bonusSortant),
+            minPauseMediane: convertSecondesEnHHmm(newSetting.pointage.minPauseMediane)
           },
           dbFile: newSetting.dbFile
         }
@@ -136,60 +109,13 @@
             nom: this.formSettings.utilisateur.nom
           },
           pointage: {
-            maxMatin: this.convertHHmmEnsecondes(this.formSettings.pointage.maxMatin),
-            minApresMidi: this.convertHHmmEnsecondes(this.formSettings.pointage.minApresMidi),
-            bonusDebut: this.convertMMssEnsecondes(this.formSettings.pointage.bonusDebut),
-            bonusFin: this.convertMMssEnsecondes(this.formSettings.pointage.bonusFin),
-            minPauseMediane: this.convertHHmmEnsecondes(this.formSettings.pointage.minPauseMediane)
+            bonusEntrant: convertMMssEnsecondes(this.formSettings.pointage.bonusEntrant),
+            bonusSortant: convertMMssEnsecondes(this.formSettings.pointage.bonusSortant),
+            minPauseMediane: convertHHmmEnsecondes(this.formSettings.pointage.minPauseMediane)
           },
           dbFile: this.formSettings.dbFile
         }
         this.$store.dispatch('setSetting', formToDispatch)
-      },
-      padTime (nombre) {
-        if (nombre < 10) {
-          return `0${nombre}`
-        } else {
-          return nombre
-        }
-      },
-      convertSecondesEnMMss (secondesIn) {
-        if (secondesIn) {
-          let minutes = Math.floor(secondesIn / 60)
-          let secondes = secondesIn % 60
-          return `${this.padTime(minutes)}:${this.padTime(secondes)}`
-        } else {
-          return '00:00'
-        }
-      },
-      convertMMssEnsecondes (mmss) {
-        if (mmss) {
-          let mmssArray = mmss.split(':')
-          let minutes = Number.parseInt(mmssArray[0])
-          let secondes = Number.parseInt(mmssArray[1])
-          return minutes * 60 + secondes
-        } else {
-          return 0
-        }
-      },
-      convertSecondesEnHHmm (secondesIn) {
-        if (secondesIn) {
-          let heures = Math.floor(secondesIn / 3600)
-          let minutes = Math.floor((secondesIn % 3600) / 60)
-          return `${this.padTime(heures)}:${this.padTime(minutes)}`
-        } else {
-          return '00:00'
-        }
-      },
-      convertHHmmEnsecondes (hhmm) {
-        if (hhmm) {
-          let hhmmArray = hhmm.split(':')
-          let heures = Number.parseInt(hhmmArray[0])
-          let minutes = Number.parseInt(hhmmArray[1])
-          return heures * 3600 + minutes * 60
-        } else {
-          return 0
-        }
       },
       selectFile () {
         let that = this
